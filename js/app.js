@@ -92,7 +92,8 @@ const products = [
 // 3. Shopping cart
 
 let cart = [];
-
+let customerCreditLimit = 0;
+let orders = [];
 // 4. Pagination settings
 
 const productsPerPage = 4;
@@ -417,16 +418,52 @@ document.getElementById("cart-modal").addEventListener("click", function (event)
 
 // 20. Temporary checkout action
 
-document.getElementById("checkout-button").addEventListener("click", function () {
 
+document.getElementById("checkout-button").addEventListener("click", function () {
     if (cart.length === 0) {
         alert("Your cart is empty!");
         return;
     }
 
-    alert("Your cart is ready! Checkout functionality is coming next.");
-
+    displayCheckout();
+    document.getElementById("cart-modal").classList.remove("show");
+    document.getElementById("checkout-modal").classList.add("show");
 });
+
+function displayCheckout() {
+    const summary = document.getElementById("checkout-summary");
+    const totalElement = document.getElementById("checkout-total");
+
+    summary.innerHTML = cart.map(item => `
+        <div class="cart-item">
+            <div class="cart-item-info">
+                <h3>${item.title}</h3>
+                <p>₹${item.price.toLocaleString("en-IN")} × ${item.quantity}</p>
+            </div>
+            <strong>
+                ₹${(item.price * item.quantity).toLocaleString("en-IN")}
+            </strong>
+        </div>
+    `).join("");
+
+    const total = cart.reduce(
+        (sum, item) => sum + item.price * item.quantity,
+        0
+    );
+
+    totalElement.textContent = "₹" + total.toLocaleString("en-IN");
+}
+
+document.getElementById("close-checkout").addEventListener("click", function () {
+    document.getElementById("checkout-modal").classList.remove("show");
+});
+
+document.getElementById("checkout-modal").addEventListener("click", function (event) {
+    if (event.target === this) {
+        this.classList.remove("show");
+    }
+});
+
 
 // 13. View individual product details
 
@@ -547,5 +584,76 @@ document.getElementById("product-modal").addEventListener("click", function (eve
         this.classList.remove("show");
     }
 
+});
+
+document.getElementById("place-order-button").addEventListener("click", function () {
+    if (cart.length === 0) {
+        alert("Your cart is empty!");
+        return;
+    }
+
+    const paymentMethod = document.querySelector(
+        'input[name="payment-method"]:checked'
+    ).value;
+
+    const total = cart.reduce(
+        (sum, item) => sum + item.price * item.quantity,
+        0
+    );
+
+    // Validate credit limit
+    if (paymentMethod === "credit" && total > customerCreditLimit) {
+        alert(
+            `Insufficient credit limit! Your available credit is ₹${customerCreditLimit}.`
+        );
+        return;
+    }
+
+    // Confirm the order
+    const confirmed = confirm(
+        `Confirm your order of ₹${total.toLocaleString("en-IN")} using ${paymentMethod.toUpperCase()}?`
+    );
+
+    if (!confirmed) {
+        return;
+    }
+
+    // Create order
+    const newOrder = {
+        id: "HC" + Date.now(),
+        date: new Date().toLocaleString("en-IN"),
+        items: cart.map(item => ({ ...item })),
+        total: total,
+        paymentMethod: paymentMethod,
+        status: "Placed"
+    };
+
+    // Reduce product stock
+    cart.forEach(cartItem => {
+        const product = products.find(item => item.id === cartItem.id);
+        product.qty -= cartItem.quantity;
+    });
+
+    // Deduct credit when credit payment is selected
+    if (paymentMethod === "credit") {
+        customerCreditLimit -= total;
+    }
+
+    // Save order temporarily
+    orders.push(newOrder);
+
+    // Clear cart
+    cart = [];
+    updateCartCount();
+
+    // Close checkout modal
+    document.getElementById("checkout-modal").classList.remove("show");
+
+    // Refresh product display
+    filterProducts();
+
+    alert(
+        `Order placed successfully! 🎉\n\nOrder ID: ${newOrder.id}\nTotal: ₹${total.toLocaleString("en-IN")}\nPayment: ${paymentMethod.toUpperCase()}`
+    );
 });
 

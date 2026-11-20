@@ -185,6 +185,42 @@
 
 </div>
 
+<!-- Checkout Modal -->
+<div class="modal" id="checkout-modal">
+    <div class="modal-content checkout-modal-content">
+        <button class="close-modal" id="close-checkout">&times;</button>
+
+        <h2>Complete Your Order 💜</h2>
+        <p class="checkout-subtitle">Just a few details before your purchase!</p>
+
+        <div class="checkout-section">
+            <h3>Order Summary</h3>
+            <div id="checkout-summary"></div>
+            <h3 class="checkout-total">
+                Total: <span id="checkout-total">₹0</span>
+            </h3>
+        </div>
+
+        <div class="checkout-section">
+            <h3>Payment Method</h3>
+
+            <label class="payment-option">
+                <input type="radio" name="payment-method" value="cash" checked>
+                <span>💵 Cash Payment</span>
+            </label>
+
+            <label class="payment-option">
+                <input type="radio" name="payment-method" value="credit">
+                <span>💳 Credit Limit</span>
+            </label>
+        </div>
+
+        <button class="shop-button" id="place-order-button">
+            Place Order
+        </button>
+    </div>
+</div>
+
 
     </main>
 
