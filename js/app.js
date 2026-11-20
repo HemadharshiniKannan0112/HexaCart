@@ -260,6 +260,7 @@ function addToCart(productId) {
     alert(product.title + " added to cart!");
 }
 
+
 // 11. Update cart count
 
 function updateCartCount() {
@@ -270,6 +271,8 @@ function updateCartCount() {
     );
 
     document.querySelector(".cart-link span").textContent = totalItems;
+
+    displayCart();
 }
 
 // 12. Initial page loading
@@ -287,6 +290,141 @@ document.addEventListener("DOMContentLoaded", function () {
     displayProducts(filteredProducts);
 
     updateCartCount();
+
+});
+
+// 16. Display shopping cart
+
+function displayCart() {
+
+    const cartContainer = document.getElementById("cart-items");
+
+    const cartTotal = document.getElementById("cart-total");
+
+    if (cart.length === 0) {
+
+        cartContainer.innerHTML = `
+            <div class="cart-empty">
+                <h3>Your cart is empty 🛍️</h3>
+                <p>Explore our products and find something you love!</p>
+            </div>
+        `;
+
+        cartTotal.textContent = "₹0";
+
+        return;
+    }
+
+    cartContainer.innerHTML = cart.map(item => `
+        <div class="cart-item">
+
+            <div class="cart-item-info">
+                <h3>${item.title}</h3>
+                <p>₹${item.price.toLocaleString("en-IN")} each</p>
+                <p>Subtotal: ₹${(item.price * item.quantity).toLocaleString("en-IN")}</p>
+            </div>
+
+            <div class="cart-item-actions">
+
+                <button onclick="changeCartQuantity(${item.id}, -1)">−</button>
+
+                <span>${item.quantity}</span>
+
+                <button onclick="changeCartQuantity(${item.id}, 1)">+</button>
+
+                <button
+                    class="remove-button"
+                    onclick="removeFromCart(${item.id})">
+                    Remove
+                </button>
+
+            </div>
+
+        </div>
+    `).join("");
+
+    const total = cart.reduce(
+        (sum, item) => sum + item.price * item.quantity,
+        0
+    );
+
+    cartTotal.textContent = "₹" + total.toLocaleString("en-IN");
+}
+
+// 17. Change cart quantity
+
+function changeCartQuantity(productId, change) {
+
+    const cartItem = cart.find(item => item.id === productId);
+
+    const product = products.find(item => item.id === productId);
+
+    if (!cartItem || !product) {
+        return;
+    }
+
+    const newQuantity = cartItem.quantity + change;
+
+    if (newQuantity < 1) {
+        removeFromCart(productId);
+        return;
+    }
+
+    if (newQuantity > product.qty) {
+        alert("Available stock limit reached.");
+        return;
+    }
+
+    cartItem.quantity = newQuantity;
+
+    updateCartCount();
+}
+
+// 18. Remove product from cart
+
+function removeFromCart(productId) {
+
+    cart = cart.filter(item => item.id !== productId);
+
+    updateCartCount();
+}
+
+// 19. Open and close cart
+
+document.getElementById("open-cart").addEventListener("click", function (event) {
+
+    event.preventDefault();
+
+    displayCart();
+
+    document.getElementById("cart-modal").classList.add("show");
+
+});
+
+document.getElementById("close-cart").addEventListener("click", function () {
+
+    document.getElementById("cart-modal").classList.remove("show");
+
+});
+
+document.getElementById("cart-modal").addEventListener("click", function (event) {
+
+    if (event.target === this) {
+        this.classList.remove("show");
+    }
+
+});
+
+// 20. Temporary checkout action
+
+document.getElementById("checkout-button").addEventListener("click", function () {
+
+    if (cart.length === 0) {
+        alert("Your cart is empty!");
+        return;
+    }
+
+    alert("Your cart is ready! Checkout functionality is coming next.");
 
 });
 
