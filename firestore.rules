@@ -1,0 +1,73 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+
+    // Admin = the user added in Authentication > Users
+    function isAdmin() { return signedIn() && request.auth.uid == 'YPa3iN00v4YOZFS9Gle8xkqyAH33'; }
+
+    function onlyChanges(keys) {
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(keys);
+    }
+
+    // Everyone reads categories, only admin writes
+    match /categories/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Everyone reads products. Admin has full CRUD.
+    // A signed-in customer may ONLY lower qty (that is what a purchase does).
+    match /products/{id} {
+      allow read: if true;
+      allow create: if isAdmin()
+        && request.resource.data.title is string
+        && request.resource.data.price is number && request.resource.data.price > 0
+        && request.resource.data.qty is int && request.resource.data.qty >= 0;
+      allow update: if isAdmin()
+        || (signedIn() && onlyChanges(['qty'])
+            && request.resource.data.qty is int
+            && request.resource.data.qty >= 0
+            && request.resource.data.qty < resource.data.qty);
+      allow delete: if isAdmin();
+    }
+
+    // Customer profile, document id = Firebase Auth uid
+    match /customers/{uid} {
+      allow read: if isAdmin() || (signedIn() && request.auth.uid == uid);
+      allow create: if signedIn() && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['name', 'email', 'mob', 'creditLimit'])
+        && request.resource.data.name is string && request.resource.data.name.size() >= 3
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.mob.matches('^[6-9][0-9]{9}$')
+        && request.resource.data.creditLimit == 0;
+      allow update: if isAdmin()
+        || (signedIn() && request.auth.uid == uid && (
+              // paying by credit: the customer can only LOWER the limit
+              (onlyChanges(['creditLimit'])
+                && request.resource.data.creditLimit is number
+                && request.resource.data.creditLimit >= 0
+                && request.resource.data.creditLimit < resource.data.creditLimit)
+              // editing own profile
+           || (onlyChanges(['name', 'mob'])
+                && request.resource.data.name.size() >= 3
+                && request.resource.data.mob.matches('^[6-9][0-9]{9}$'))
+        ));
+      allow delete: if isAdmin();
+    }
+
+    // Orders: customer creates and reads only their own, admin reads all
+    match /orders/{oid} {
+      allow read: if isAdmin() || (signedIn() && resource.data.uid == request.auth.uid);
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly(['uid', 'name', 'email', 'date', 'pay', 'total', 'items'])
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.pay in ['cash', 'credit']
+        && request.resource.data.total is number && request.resource.data.total > 0
+        && request.resource.data.items is map;
+      allow delete: if isAdmin();
+    }
+  }
+}

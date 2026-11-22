@@ -1,6 +1,17 @@
+.DS_Store
+Thumbs.db
+.firebase/
 node_modules/
 .env
+.env.local
+service-account*.json
+firebase-adminsdk*.json
+
+# Local backups
+*.backup.js
+*.bak
+
+# Local environment and credentials
 .env.*
 !.env.example
-firebase-debug.log
-.DS_Store
+serviceAccount.json
