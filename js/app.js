@@ -454,6 +454,55 @@ function displayCheckout() {
     totalElement.textContent = "₹" + total.toLocaleString("en-IN");
 }
 
+// Display Customer Order History
+function displayOrderHistory() {
+    const orderContainer = document.getElementById("order-history-list");
+
+    if (orders.length === 0) {
+        orderContainer.innerHTML = `
+            <div class="no-orders">
+                <h3>No orders yet! 🛍️</h3>
+                <p>Your purchases will appear here once you place an order.</p>
+            </div>
+        `;
+        return;
+    }
+
+    orderContainer.innerHTML = orders.slice().reverse().map(order => `
+        <div class="order-card">
+            <div class="order-header">
+                <div>
+                    <h3>Order #${order.id}</h3>
+                    <p>Placed on: ${order.date}</p>
+                </div>
+                <span class="order-status">${order.status}</span>
+            </div>
+
+            <div class="order-products">
+                ${order.items.map(item => `
+                    <div class="order-product">
+                        <div>
+                            <strong>${item.title}</strong>
+                            <p>Quantity: ${item.quantity}</p>
+                        </div>
+                        <strong>
+                            ₹${(item.price * item.quantity).toLocaleString("en-IN")}
+                        </strong>
+                    </div>
+                `).join("")}
+            </div>
+
+            <div class="order-footer">
+                <span>Payment: ${order.paymentMethod.toUpperCase()}</span>
+                <span class="order-total">
+                    Total: ₹${order.total.toLocaleString("en-IN")}
+                </span>
+            </div>
+        </div>
+    `).join("");
+}
+
+
 document.getElementById("close-checkout").addEventListener("click", function () {
     document.getElementById("checkout-modal").classList.remove("show");
 });

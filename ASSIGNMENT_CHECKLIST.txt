@@ -1,0 +1,59 @@
+HEXACART - ASSIGNMENT CHECKLIST
+================================
+Based on P04_A3_Json_assignment_question(api).pdf (pages 1-2).
+
+CUSTOMER FEATURES
+-----------------
+[Code included] Sign up, sign in and Firebase password reset email.
+[Code included] Customer profile: id (Firebase Auth UID), name, email, mobile,
+                creditLimit default 0.
+[Code included] View active products, all/category selection, search and paging.
+[Code included] Product detail and selected quantity cart.
+[Code included] Cash and credit checkout; order history and bill view.
+[Code included] Customer profile and order data stored in Firestore.
+
+ADMIN FEATURES
+--------------
+[Code included] Inventory list with paging; create, read, update, activate,
+                deactivate and confirm-delete products.
+[Code included] Generated sequential pNNN product document IDs.
+[Code included] Upload product image from local device to Firebase Storage or
+                save an HTTPS image URL in Firestore.
+[Code included] Customer credit-limit update and reset; customer profile CRUD.
+[Code included] Customer, inventory and sales report views with date filters.
+[Code included] Top/bottom ten selling items and stock threshold reports.
+
+TECHNICAL / UI
+--------------
+[Code included] HTML, CSS, JavaScript, jQuery, JSON and asynchronous requests.
+[Code included] Firebase Authentication REST and Firestore REST integration.
+[Code included] Firestore rules and Firebase Storage rules.
+[Code included] Postman collection and environment.
+[Code included] Warm and Dark theme toggle; responsive professional layout.
+[Code included] Local sample product images.
+
+EXTERNAL SETUP AND LIVE TESTS STILL REQUIRED
+--------------------------------------------
+[ ] Enable Email/Password in Firebase Authentication.
+[ ] Create/confirm Firestore database and Firebase Storage bucket.
+[ ] Confirm admin UID, configure storage bucket name in API client.
+[ ] Deploy firestore.rules and storage.rules.
+[ ] Seed sample categories/products once as admin if database is empty.
+[ ] Configure EmailJS for order bill emails; test delivery to a real inbox.
+[ ] Configure Firebase password reset email template and authorised domains.
+[ ] Run all customer/admin flows and Postman requests against the project.
+[ ] Verify rejected unauthorised reads/writes in Firebase Rules Playground.
+[ ] Push source to GitHub and capture requested evidence/screenshots.
+
+SECURITY / SCOPE NOTES
+---------------------
+The browser app uses Firebase REST APIs and Firebase Security Rules. It is an
+assignment/demo implementation, not a production payment backend. For a real
+commerce deployment, move checkout validation, credit accounting, and
+collision-proof ID allocation to trusted Cloud Functions or a server using the
+Firebase Admin SDK. Do not trust browser-supplied prices or totals in a
+production checkout. Do not commit passwords or service-account credentials.
+
+The PDF specifies a default credit limit of 0 and separately mentions a 1000
+credit amount in the purchase description. This implementation follows the
+explicit profile default of 0; an administrator assigns a limit.

@@ -794,3 +794,93 @@ a {
     width: 100%;
     margin-top: 25px;
 }
+
+/* 14. Order History */
+
+.order-history-section {
+    padding: 80px 8%;
+    background: #fcfaff;
+}
+
+.order-history-section .section-heading {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.section-tag {
+    color: var(--primary);
+    font-weight: 700;
+    letter-spacing: 2px;
+    font-size: 12px;
+}
+
+.no-orders {
+    text-align: center;
+    padding: 45px 20px;
+    background: white;
+    border-radius: 15px;
+    color: var(--grey);
+}
+
+.order-card {
+    background: white;
+    border: 1px solid #eee8f5;
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 20px;
+    box-shadow: 0 5px 20px rgba(80, 50, 100, 0.05);
+}
+
+.order-header {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.order-header h3 {
+    color: var(--primary-dark);
+}
+
+.order-status {
+    background: #e8f8ed;
+    color: #26834a;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.order-product {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 12px 0;
+    border-top: 1px solid #f0ebf5;
+}
+
+.order-footer {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #eee8f5;
+}
+
+.order-total {
+    color: var(--primary-dark);
+    font-weight: 700;
+}
+
+@media (max-width: 600px) {
+    .order-history-section {
+        padding: 50px 5%;
+    }
+
+    .order-card {
+        padding: 18px;
+    }
+}
